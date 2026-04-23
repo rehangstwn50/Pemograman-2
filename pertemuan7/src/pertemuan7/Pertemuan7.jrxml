@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jasperReport PUBLIC "-//JasperReports//DTD Report Design//EN"
+"http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+
+<jasperReport name="Pertemuan7" pageWidth="595" pageHeight="842"
+    columnWidth="555" leftMargin="20" rightMargin="20"
+    topMargin="20" bottomMargin="20">
+
+    <property name="net.sf.jasperreports.print.keep.full.text" value="true"/>
+
+    <!-- QUERY -->
+    <queryString>
+        <![CDATA[SELECT * FROM nilai_mahasiswa]]>
+    </queryString>
+
+    <!-- FIELD -->
+    <field name="nim" class="java.lang.String"/>
+    <field name="nama" class="java.lang.String"/>
+    <field name="mata_kuliah" class="java.lang.String"/>
+    <field name="nil1" class="java.lang.Double"/>
+    <field name="nil2" class="java.lang.Double"/>
+    <field name="rata_rata" class="java.lang.Double"/>
+
+    <!-- TITLE + LOGO -->
+    <title>
+        <band height="80">
+
+            <image>
+                <reportElement x="0" y="10" width="60" height="60"/>
+                <imageExpression><![CDATA[getClass().getResource("/pertemuan7/logo.png")]]></imageExpression>
+            </image>
+
+            <staticText>
+                <reportElement x="60" y="15" width="495" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <text><![CDATA[DAFTAR NILAI MAHASISWA SEMESTER GENAP]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="60" y="35" width="495" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <text><![CDATA[UNIV. PAMULANG - TANGERANG SELATAN]]></text>
+            </staticText>
+
+        </band>
+    </title>
+
+    <!-- HEADER -->
+    <columnHeader>
+        <band height="30">
+
+            <staticText>
+                <reportElement x="0" y="0" width="90" height="30"/>
+                <box><pen lineWidth="1.5"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[NIM]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="90" y="0" width="150" height="30"/>
+                <box><pen lineWidth="1.5"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[NAMA]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="240" y="0" width="150" height="30"/>
+                <box><pen lineWidth="1.5"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[MATA KULIAH]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="390" y="0" width="55" height="30"/>
+                <box><pen lineWidth="1.5"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[N1]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="445" y="0" width="55" height="30"/>
+                <box><pen lineWidth="1.5"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[N2]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="500" y="0" width="55" height="30"/>
+                <box><pen lineWidth="1.5"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[RATA]]></text>
+            </staticText>
+
+        </band>
+    </columnHeader>
+
+    <!-- DETAIL (SEMUA CENTER 🔥) -->
+    <detail>
+        <band height="30">
+
+            <textField>
+                <reportElement x="0" y="0" width="90" height="30"/>
+                <box><pen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{nim}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="90" y="0" width="150" height="30"/>
+                <box><pen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{nama}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="240" y="0" width="150" height="30"/>
+                <box><pen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{mata_kuliah}]]></textFieldExpression>
+            </textField>
+
+            <textField pattern="#,##0.0">
+                <reportElement x="390" y="0" width="55" height="30"/>
+                <box><pen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{nil1}]]></textFieldExpression>
+            </textField>
+
+            <textField pattern="#,##0.0">
+                <reportElement x="445" y="0" width="55" height="30"/>
+                <box><pen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{nil2}]]></textFieldExpression>
+            </textField>
+
+            <textField pattern="#,##0.0">
+                <reportElement x="500" y="0" width="55" height="30"/>
+                <box><pen lineWidth="1.0"/></box>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{rata_rata}]]></textFieldExpression>
+            </textField>
+
+        </band>
+    </detail>
+
+</jasperReport>
