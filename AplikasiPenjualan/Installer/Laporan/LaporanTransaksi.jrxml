@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="LaporanTransaksi"
+              pageWidth="842" pageHeight="595"
+              orientation="Landscape"
+              columnWidth="782" leftMargin="30" rightMargin="30"
+              topMargin="20" bottomMargin="20"
+              uuid="a1b2c3d4-1111-1111-1111-000000000001">
+
+    <parameter name="nama_toko" class="java.lang.String">
+        <defaultValueExpression><![CDATA["Toko Sejahtera"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="tgl_awal"  class="java.sql.Date"/>
+    <parameter name="tgl_akhir" class="java.sql.Date"/>
+
+    <queryString>
+        <![CDATA[
+        SELECT
+            p.no_nota,
+            p.tanggal,
+            COALESCE(c.nama_customer, 'Umum') AS nama_customer,
+            d.kode_barang,
+            d.nama_barang,
+            d.qty,
+            d.harga_satuan,
+            d.subtotal       AS subtotal_item,
+            p.total_bayar
+        FROM penjualan p
+        LEFT JOIN customer c ON p.kode_customer = c.kode_customer
+        JOIN detail_penjualan d ON p.no_nota = d.no_nota
+        WHERE p.tanggal BETWEEN $P{tgl_awal} AND $P{tgl_akhir}
+          AND p.status = 'lunas'
+        ORDER BY p.tanggal, p.no_nota
+        ]]>
+    </queryString>
+
+    <field name="no_nota"       class="java.lang.String"/>
+    <field name="tanggal"       class="java.sql.Date"/>
+    <field name="nama_customer" class="java.lang.String"/>
+    <field name="kode_barang"   class="java.lang.String"/>
+    <field name="nama_barang"   class="java.lang.String"/>
+    <field name="qty"           class="java.lang.Integer"/>
+    <field name="harga_satuan"  class="java.lang.Double"/>
+    <field name="subtotal_item" class="java.lang.Double"/>
+    <field name="total_bayar"   class="java.lang.Double"/>
+
+    <variable name="grandTotal" class="java.lang.Double" calculation="Sum">
+        <variableExpression><![CDATA[$F{subtotal_item}]]></variableExpression>
+    </variable>
+    <variable name="subtotalNota" class="java.lang.Double"
+              calculation="Sum" resetType="Group" resetGroup="grpNota">
+        <variableExpression><![CDATA[$F{subtotal_item}]]></variableExpression>
+    </variable>
+
+    <group name="grpNota">
+        <groupExpression><![CDATA[$F{no_nota}]]></groupExpression>
+
+        <groupHeader>
+            <band height="20" splitType="Stretch">
+                <rectangle>
+                    <reportElement x="0" y="2" width="782" height="16"
+                                   backcolor="#E6F4F1" forecolor="#E6F4F1" mode="Opaque"
+                                   uuid="a1b2c3d4-1111-1111-1111-100000000001"/>
+                </rectangle>
+                <textField>
+                    <reportElement x="0" y="2" width="160" height="16"
+                                   uuid="a1b2c3d4-1111-1111-1111-100000000002"/>
+                    <textElement verticalAlignment="Middle">
+                        <font isBold="true" size="9"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA["Nota: " + $F{no_nota}]]></textFieldExpression>
+                </textField>
+                <textField pattern="dd-MM-yyyy">
+                    <reportElement x="165" y="2" width="100" height="16"
+                                   uuid="a1b2c3d4-1111-1111-1111-100000000003"/>
+                    <textElement verticalAlignment="Middle">
+                        <font size="9"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{tanggal}]]></textFieldExpression>
+                </textField>
+                <textField>
+                    <reportElement x="270" y="2" width="200" height="16"
+                                   uuid="a1b2c3d4-1111-1111-1111-100000000004"/>
+                    <textElement verticalAlignment="Middle">
+                        <font size="9"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA["Customer: " + $F{nama_customer}]]></textFieldExpression>
+                </textField>
+            </band>
+        </groupHeader>
+
+        <groupFooter>
+            <band height="18" splitType="Stretch">
+                <line>
+                    <reportElement x="0" y="0" width="782" height="1"
+                                   forecolor="#CCCCCC"
+                                   uuid="a1b2c3d4-1111-1111-1111-200000000001"/>
+                </line>
+                <staticText>
+                    <reportElement x="470" y="2" width="120" height="14"
+                                   uuid="a1b2c3d4-1111-1111-1111-200000000002"/>
+                    <textElement textAlignment="Right" verticalAlignment="Middle">
+                        <font isBold="true" size="9"/>
+                    </textElement>
+                    <text><![CDATA[Subtotal Nota:]]></text>
+                </staticText>
+                <textField>
+                    <reportElement x="600" y="2" width="182" height="14"
+                                   uuid="a1b2c3d4-1111-1111-1111-200000000003"/>
+                    <textElement textAlignment="Right" verticalAlignment="Middle">
+                        <font isBold="true" size="9"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA["Rp " + java.text.NumberFormat.getIntegerInstance(new java.util.Locale("id","ID")).format($V{subtotalNota})]]></textFieldExpression>
+                </textField>
+            </band>
+        </groupFooter>
+    </group>
+
+    <title>
+        <band height="60" splitType="Stretch">
+            <staticText>
+                <reportElement x="0" y="0" width="782" height="28"
+                               forecolor="#1E7A6E"
+                               uuid="a1b2c3d4-1111-1111-1111-300000000001"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="18" isBold="true" fontName="Arial"/>
+                </textElement>
+                <text><![CDATA[LAPORAN TRANSAKSI PENJUALAN]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="0" y="28" width="782" height="16"
+                               uuid="a1b2c3d4-1111-1111-1111-300000000002"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{nama_toko}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="44" width="782" height="14"
+                               uuid="a1b2c3d4-1111-1111-1111-300000000003"/>
+                <textElement textAlignment="Center">
+                    <font size="9" isItalic="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Periode: " + new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{tgl_awal}) + " s/d " + new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{tgl_akhir})]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <pageHeader>
+        <band height="22" splitType="Stretch">
+            <rectangle>
+                <reportElement x="0" y="0" width="782" height="22"
+                               backcolor="#1E7A6E" forecolor="#1E7A6E" mode="Opaque"
+                               uuid="a1b2c3d4-1111-1111-1111-400000000001"/>
+            </rectangle>
+            <staticText>
+                <reportElement x="0" y="0" width="30" height="22" forecolor="WHITE"
+                               uuid="a1b2c3d4-1111-1111-1111-400000000002"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font isBold="true" size="9"/>
+                </textElement>
+                <text><![CDATA[No]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="30" y="0" width="80" height="22" forecolor="WHITE"
+                               uuid="a1b2c3d4-1111-1111-1111-400000000003"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font isBold="true" size="9"/>
+                </textElement>
+                <text><![CDATA[Kode Barang]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="110" y="0" width="200" height="22" forecolor="WHITE"
+                               uuid="a1b2c3d4-1111-1111-1111-400000000004"/>
+                <textElement verticalAlignment="Middle">
+                    <font isBold="true" size="9"/>
+                </textElement>
+                <text><![CDATA[Nama Barang]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="310" y="0" width="60" height="22" forecolor="WHITE"
+                               uuid="a1b2c3d4-1111-1111-1111-400000000005"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font isBold="true" size="9"/>
+                </textElement>
+                <text><![CDATA[Qty]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="370" y="0" width="130" height="22" forecolor="WHITE"
+                               uuid="a1b2c3d4-1111-1111-1111-400000000006"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font isBold="true" size="9"/>
+                </textElement>
+                <text><![CDATA[Harga Satuan]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="500" y="0" width="282" height="22" forecolor="WHITE"
+                               uuid="a1b2c3d4-1111-1111-1111-400000000007"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font isBold="true" size="9"/>
+                </textElement>
+                <text><![CDATA[Subtotal]]></text>
+            </staticText>
+        </band>
+    </pageHeader>
+
+    <detail>
+        <band height="16" splitType="Stretch">
+            <rectangle>
+                <reportElement x="0" y="0" width="782" height="16"
+                               backcolor="#F5F5F5" forecolor="#F5F5F5" mode="Opaque"
+                               uuid="a1b2c3d4-1111-1111-1111-500000000001">
+                    <printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression>
+                </reportElement>
+            </rectangle>
+            <textField>
+                <reportElement x="0" y="0" width="30" height="16"
+                               uuid="a1b2c3d4-1111-1111-1111-500000000002"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="30" y="0" width="80" height="16"
+                               uuid="a1b2c3d4-1111-1111-1111-500000000003"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{kode_barang}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true">
+                <reportElement x="110" y="0" width="200" height="16"
+                               uuid="a1b2c3d4-1111-1111-1111-500000000004"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{nama_barang}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="310" y="0" width="60" height="16"
+                               uuid="a1b2c3d4-1111-1111-1111-500000000005"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{qty}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="370" y="0" width="130" height="16"
+                               uuid="a1b2c3d4-1111-1111-1111-500000000006"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Rp " + java.text.NumberFormat.getIntegerInstance(new java.util.Locale("id","ID")).format($F{harga_satuan})]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="500" y="0" width="282" height="16"
+                               uuid="a1b2c3d4-1111-1111-1111-500000000007"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Rp " + java.text.NumberFormat.getIntegerInstance(new java.util.Locale("id","ID")).format($F{subtotal_item})]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <columnFooter>
+        <band height="24" splitType="Stretch">
+            <line>
+                <reportElement x="0" y="0" width="782" height="2"
+                               forecolor="#1E7A6E"
+                               uuid="a1b2c3d4-1111-1111-1111-600000000001"/>
+            </line>
+            <staticText>
+                <reportElement x="0" y="4" width="400" height="18"
+                               forecolor="#1E7A6E"
+                               uuid="a1b2c3d4-1111-1111-1111-600000000002"/>
+                <textElement verticalAlignment="Middle">
+                    <font isBold="true" size="10"/>
+                </textElement>
+                <text><![CDATA[GRAND TOTAL SELURUH TRANSAKSI]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="400" y="4" width="382" height="18"
+                               forecolor="#1E7A6E"
+                               uuid="a1b2c3d4-1111-1111-1111-600000000003"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font isBold="true" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Rp " + java.text.NumberFormat.getIntegerInstance(new java.util.Locale("id","ID")).format($V{grandTotal})]]></textFieldExpression>
+            </textField>
+        </band>
+    </columnFooter>
+
+    <pageFooter>
+        <band height="18" splitType="Stretch">
+            <line>
+                <reportElement x="0" y="0" width="782" height="1"
+                               forecolor="#CCCCCC"
+                               uuid="a1b2c3d4-1111-1111-1111-700000000001"/>
+            </line>
+            <textField>
+                <reportElement x="0" y="2" width="300" height="14"
+                               uuid="a1b2c3d4-1111-1111-1111-700000000002"/>
+                <textElement>
+                    <font size="8" isItalic="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Dicetak: " + new java.text.SimpleDateFormat("dd-MM-yyyy HH:mm").format(new java.util.Date())]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="600" y="2" width="182" height="14"
+                               uuid="a1b2c3d4-1111-1111-1111-700000000003"/>
+                <textElement textAlignment="Right">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Hal. " + $V{PAGE_NUMBER} + " / " + $V{PAGE_COUNT}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+
+</jasperReport>
