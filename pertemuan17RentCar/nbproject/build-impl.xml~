@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    *** GENERATED FROM project.xml - DO NOT EDIT  ***
+    ***         EDIT ../build.xml INSTEAD         ***
+-->
+<project name="RentCar-impl" basedir="..">
+    <property file="nbproject/private/private.properties"/>
+    <property file="nbproject/project.properties"/>
+
+    <condition property="have.tests"><available file="${test.src.dir}"/></condition>
+    <condition property="have.sources"><available file="${src.dir}"/></condition>
+
+    <target name="-pre-init"/>
+    <target name="-post-init"/>
+    <target name="-init-private" depends="-pre-init">
+        <property file="nbproject/private/private.properties"/>
+    </target>
+    <target name="-init-userdir"/>
+    <target name="-init-user" depends="-init-private,-init-userdir"/>
+    <target name="-init-project"/>
+    <target name="init" depends="-init-private,-init-user,-init-project,-post-init"/>
+
+    <target name="compile" depends="init">
+        <mkdir dir="${build.classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.classes.dir}"
+               source="${javac.source}" target="${javac.target}"
+               classpath="${javac.classpath}:${j2ee.platform.classpath}"
+               encoding="${source.encoding}" debug="true" deprecation="${javac.deprecation}"/>
+    </target>
+
+    <target name="dist" depends="compile">
+        <mkdir dir="${dist.dir}"/>
+        <war destfile="${dist.war}" webxml="${webinf.dir}/web.xml" basedir="${web.docbase.dir}">
+            <classes dir="${build.classes.dir}"/>
+        </war>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <target name="default" depends="dist"/>
+</project>

@@ -1,0 +1,18 @@
+==============================================
+TAMBAHKAN FILE INI KE FOLDER lib:
+==============================================
+mysql-connector-j-8.3.0.jar
+
+CARA DOWNLOAD:
+1. Buka: https://dev.mysql.com/downloads/connector/j/
+2. Pilih "Platform Independent" → ZIP
+3. Ekstrak dan ambil file .jar
+4. Copy ke folder: WEB-INF/lib/
+
+ATAU lewat Maven Central:
+https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.3.0/mysql-connector-j-8.3.0.jar
+
+ATAU di NetBeans:
+- Klik kanan project → Properties → Libraries
+- Add JAR/Folder → pilih mysql-connector-j-8.3.0.jar
+==============================================
